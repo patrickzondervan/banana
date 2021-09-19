@@ -45,6 +45,6 @@ object BananaTestEnvironment {
 
     @Subscribe("some-packet", priority = 44)
     fun onHi(message: Message) {
-        println("received hi! ${message["something"]}")
+        println("received some packet! Here's the message: ${message["something"]}")
     }
 }
