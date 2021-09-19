@@ -22,7 +22,7 @@ data class Banana(
     private var jedisPool: JedisPool? = null
     private val pubSub = BananaSubscription(this)
 
-    var shutdownHookAdded = false
+    private var shutdownHookAdded = false
 
     val subscriptions = mutableMapOf<String, MutableList<BananaSubscriptionData>>()
 
