@@ -43,23 +43,23 @@ data class Banana(
             "Banana Subscription Thread"
         ).start()
 
-        if (shutdownHookAdded) return
+        if (!shutdownHookAdded) {
+            Runtime.getRuntime().addShutdownHook(
+                Thread {
+                    if (jedisPool != null && !jedisPool!!.isClosed) {
+                        jedisPool?.close()
+                    }
 
-        Runtime.getRuntime().addShutdownHook(
-            Thread {
-                if (jedisPool != null && !jedisPool!!.isClosed) {
-                    jedisPool?.close()
+                    if (pubSub.isSubscribed) {
+                        pubSub.unsubscribe()
+                    }
+
+                    println("[Banana] Disconnected from jedis channel \"${options.channel}\".")
                 }
+            )
 
-                if (pubSub.isSubscribed) {
-                    pubSub.unsubscribe()
-                }
-
-                println("[Banana] Disconnected from jedis channel \"${options.channel}\".")
-            }
-        )
-
-        shutdownHookAdded = true
+            shutdownHookAdded = true
+        }
     }
 
     fun useResource(lambda: (Jedis) -> Unit) {
@@ -94,7 +94,7 @@ data class Banana(
     }
 
     private fun registerMethod(method: Method, instance: Any) {
-        val subscribe = method.getAnnotation(Subscribe::class.java)
+        val subscribe = method.getAnnotation(Subscribe::class.java) ?: return
         subscriptions.putIfAbsent(subscribe.value, mutableListOf())
 
         val packetSubscriptions = subscriptions[subscribe.value]
