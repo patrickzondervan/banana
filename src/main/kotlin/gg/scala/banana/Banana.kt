@@ -40,7 +40,7 @@ data class Banana(
                     println("[Banana] Now reading on jedis channel \"${options.channel}\".")
                 }
             },
-            "Banana Subscription Thread"
+            "Banana Subscription Thread - ${options.channel}"
         ).start()
 
         if (!shutdownHookAdded) {
