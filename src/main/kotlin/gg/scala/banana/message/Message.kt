@@ -1,6 +1,7 @@
 package gg.scala.banana.message
 
 import gg.scala.banana.helper.BananaHelper
+import java.util.*
 
 /**
  * @author GrowlyX
@@ -21,6 +22,12 @@ class Message(
 
     fun convert(key: String, any: Any) {
         keyValueStore[key] = BananaHelper.banana.options.gson.toJson(any)
+    }
+    
+    fun <T> getAs(key: String, clazz: Class<T>): T? {
+        return BananaHelper.banana.options.gson.fromJson(
+            this[key], clazz
+        )
     }
 
     fun dispatch() {
